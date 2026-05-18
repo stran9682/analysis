@@ -1,6 +1,7 @@
 import pandas
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import stats
 
 media_type = [
     ("udp/audio", "quic/audio", "Audio"), 
@@ -38,6 +39,16 @@ for (udp, quic, type) in media_type:
     print(received_packets1["difference"].describe())
     print(received_packets2["difference"].describe())
 
+    statistic, p_value = stats.ranksums(received_packets1["difference"], received_packets2["difference"])
+    print(f"Statistic: {statistic}")
+    print(f"P-value: {p_value}")
+
+    plt.hist(received_packets1["difference"])
+    plt.show()
+
+    plt.hist(received_packets2["difference"])
+    plt.show()
+
     # ax = received_packets2['difference'].plot.hist(bins=15, alpha=0.5, label='QUIC', legend=True, color=["purple"] )
 
     # # Plot the second dataset onto the same axis
@@ -53,7 +64,7 @@ for (udp, quic, type) in media_type:
 
     plt.ecdf(received_packets2["difference"], label="QUIC", linewidth=2, color="purple")
 
-    plt.ylim(0.90, 1.0001) 
+    plt.ylim(0.97, 1.0001) 
     plt.ylabel(r'$\lambda_{packets}$', fontsize=15)
     plt.xlabel('Time (ms)',  fontsize=15)
     plt.legend(title='Protocols', loc='lower right')
